@@ -1,0 +1,5 @@
+= 0.0.2
+* The config values can be a proc, so that it will be called automotically
+
+= 0.0.1
+* Initial configula

@@ -77,7 +77,15 @@ class Configula
       method_name << "="
     end
     
-    eval("def obj.#{method_name.chop}(children={});  Configula.add_children(@#{method_name.chop}, children); @#{method_name.chop}; end")
+    eval(<<-EOS
+      def obj.#{method_name.chop}(children={});  
+        Configula.add_children(@#{method_name.chop}, children);  
+        ret_val = @#{method_name.chop};
+        ret_val.kind_of?(Proc) ? ret_val.call : ret_val;
+      end
+    EOS
+    )
+    
     eval("def obj.put(children={});  Configula.add_children(self, children); end")
     eval("def obj.set_#{method_name}(p); @#{method_name.chop} =  p; end")
     
