@@ -39,10 +39,6 @@ class Configula
   end
   
   def self.wire_up(obj, method_name, return_val)
-
-     #p "obj = " << obj.inspect
-     #p "method_bane = " << method_name.inspect
-     #p "return_val = " << return_val.inspect
     
     if(@@locked)
       if( return_val.nil? )
@@ -90,10 +86,12 @@ class Configula
     eval("def obj.set_#{method_name}(p); @#{method_name.chop} =  p; end")
     
     obj.send("set_#{method_name}", return_val)
-        
-    def return_val.method_missing(nm, *rv)
-      Configula.wire_up self, nm, rv[0]  
-    end 
+    
+    unless return_val.nil?
+      def return_val.method_missing(nm, *rv)
+        Configula.wire_up self, nm, rv[0]  
+      end
+    end
     
     # if we are setting childen on a value that doesnt exist using a hash...
     if( ! method_is_assignment && cached_ret_val.class==Hash )

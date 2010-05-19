@@ -5,6 +5,9 @@ describe Configula do
     def initialize
       set :string_config, "some_string_value"
       set :proc_config, lambda{ "this is a proc: #{string_config}" }
+      #set :something_with_nil, nil
+      #p "yo yo yo"
+      #something(:with_nil => nil)
       
       another_config "another_config"
       self.config_equals = "config_equals"
@@ -26,6 +29,12 @@ describe Configula do
   
   it "should multi step chaining config" do
     MyConfig.new.chaining.config.should == "chaining config"
+  end
+  
+  it "should not wire up method missing configula 'wire ups' on nil when it is passed in as a return value with the hash setting method" do
+    MyConfig.new.something(:with_nil => nil)
+    Configula.should_not_receive(:wire_up)
+    lambda { nil.some_missing_method }.should raise_error("undefined method `some_missing_method' for nil:NilClass")
   end
   
   it "should allow overriding of the values with inherting" do
@@ -86,6 +95,7 @@ describe Configula do
     it "should call the proc config when it is a proc " do
       @config.proc_config.should == "this is a proc: some_string_value"
     end
+    
   end
   
 end
